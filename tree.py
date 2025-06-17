@@ -9,8 +9,8 @@ import config
 class FakeNode:
     def __init__(self):
         self.parent = None
-        self.edge_N = np.zeros([config.all_moves_num], dtype=np.float)
-        self.edge_W = np.zeros([config.all_moves_num], dtype=np.float)
+        self.edge_N = np.zeros([config.all_moves_num], dtype=np.float32)
+        self.edge_W = np.zeros([config.all_moves_num], dtype=np.float32)
 
 
 class Node:
@@ -25,10 +25,10 @@ class Node:
         self.is_game_root = False
         self.is_search_root = False
         self.is_terminal = False
-        self.pi = np.zeros([config.all_moves_num], dtype=np.float)
-        self.edge_N = np.zeros([config.all_moves_num], dtype=np.float)
-        self.edge_W = np.zeros([config.all_moves_num], dtype=np.float)
-        self.edge_P = np.zeros([config.all_moves_num], dtype=np.float)
+        self.pi = np.zeros([config.all_moves_num], dtype=np.float32)
+        self.edge_N = np.zeros([config.all_moves_num], dtype=np.float32)
+        self.edge_W = np.zeros([config.all_moves_num], dtype=np.float32)
+        self.edge_P = np.zeros([config.all_moves_num], dtype=np.float32)
 
     @property
     def edge_Q(self):
@@ -68,7 +68,7 @@ class Node:
         self.parent.edge_W[self.move] = w
 
     def to_features(self):
-        features = np.zeros([config.history_num * 2 + 1, config.N, config.N], dtype=np.float)
+        features = np.zeros([config.history_num * 2 + 1, config.N, config.N], dtype=np.float32)
         player = self.player
         current = self
         for i in range(config.history_num):
@@ -80,7 +80,7 @@ class Node:
             current = current.parent
         
         if player == config.black:
-            features[config.history_num * 2] = np.ones([config.N, config.N], dtype=np.float)
+            features[config.history_num * 2] = np.ones([config.N, config.N], dtype=np.float32)
         return np.moveaxis(features, 0, -1)
 
 class MCTS_Batch:
@@ -105,7 +105,7 @@ class MCTS_Batch:
         return best_nodes_batch
 
     def expand_and_evaluate(self, nodes_batch):
-        features_batch = np.zeros([len(nodes_batch), config.N, config.N, config.history_num * 2 + 1], dtype=np.float)
+        features_batch = np.zeros([len(nodes_batch), config.N, config.N, config.history_num * 2 + 1], dtype=np.float32)
         for i, node in enumerate(nodes_batch):
             node.expanded = True
             features_batch[i] = node.to_features()
@@ -136,12 +136,12 @@ class MCTS_Batch:
         for i in range(config.simulations_num):
             self.search(nodes)
 
-        pi_batch = np.zeros([len(nodes), config.all_moves_num], dtype=np.float)
+        pi_batch = np.zeros([len(nodes), config.all_moves_num], dtype=np.float32)
         for i, node in enumerate(nodes):
             n_with_temperature = node.edge_N**(1 / temperature)
             sum_n_with_temperature = np.sum(n_with_temperature)
             if sum_n_with_temperature == 0:
-                node.pi = np.zeros([config.all_moves_num], dtype=np.float)
+                node.pi = np.zeros([config.all_moves_num], dtype=np.float32)
                 node.pi[config.pass_move] = 1
             else:
                 node.pi = n_with_temperature / sum_n_with_temperature
@@ -150,6 +150,14 @@ class MCTS_Batch:
     
 
 def normalize_with_mask(x, mask):
+    """Normalize x with a mask, ensuring that only the masked elements contribute to the sum.
+    Args:
+        x (np.ndarray): The array to normalize.
+        mask (np.ndarray): A boolean mask where True indicates the elements to consider for normalization.
+    Returns:
+        np.ndarray: The normalized array, where masked elements sum to 1."""
     x_masked = np.multiply(x, mask)
+    if np.sum(x_masked) == 0:
+        return np.zeros_like(x_masked)
     x_normalized = x_masked / np.sum(x_masked)
     return x_normalized
