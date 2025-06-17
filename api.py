@@ -7,7 +7,15 @@ from util import line_2_plane, log, plane_2_line
 import numpy as np
 
 
-class EdaxPlayer:
+class Player:
+    def __init__(self):
+        pass
+
+    def make_move(self, current_node):
+        raise NotImplementedError("This method should be overridden by subclasses")
+
+
+class EdaxPlayer(Player):
     def __init__(self, level):
         edax_exec = config.edax_path + " -q -eval-file " + config.edax_eval_path \
             + " -book-file " + config.edax_book_path + " --level " + str(level) + " -book-randomness 10"
@@ -46,7 +54,7 @@ class EdaxPlayer:
         self.edax.terminate()
 
 
-class HumanPlayer:
+class HumanPlayer(Player):
     def make_move(self, current_node):
         human_input = -1
         while True:
