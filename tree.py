@@ -133,6 +133,13 @@ class MCTS_Batch:
         self.backup(best_nodes_batch, v_batch)
     
     def alpha(self, nodes, temperature):
+        """Run MCTS simulations and return the policy vector for each node.
+        Args:
+            nodes (list of Node): The nodes to run MCTS on.
+            temperature (float): The temperature parameter for the policy vector.
+        Returns:
+            np.ndarray: A 2D array where each row corresponds to a node's policy vector.
+        """
         for i in range(config.simulations_num):
             self.search(nodes)
 

@@ -40,6 +40,13 @@ class Board:
             return Board(enemy, own)
 
     def get_legal_moves(self, player):
+        """Get legal moves for the player.
+        Args:
+            player (int): Player to get legal moves for (config.black or config.white).
+        Returns:
+            np.ndarray: Array of legal moves, where 1 indicates a legal move and 0 indicates an illegal move.
+            The last element is 1 if the player can pass, otherwise 0.
+        """
         own, enemy = self.get_own_and_enemy(player)
         legal_moves_without_pass = bit_to_array(get_legal_moves_bit(own, enemy), config.board_length)
         if np.sum(legal_moves_without_pass) == 0:
