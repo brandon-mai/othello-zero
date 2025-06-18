@@ -476,7 +476,6 @@ def self_play_woker(
             echo_max=echo_max,
             checkpoint_path=checkpoint_path,
             data_path=data_path,
-            echo_max=config.self_play_echo_max,
             )
         game.start()
     except Exception as ex:
