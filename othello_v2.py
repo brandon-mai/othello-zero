@@ -465,9 +465,19 @@ def get_npz_file_names(data_path=config.data_path):
     return npz_file_names
 
 
-def self_play_woker(worker_id, checkpoint_path=config.checkpoint_path, data_path=config.data_path):
+def self_play_woker(
+        worker_id,
+        echo_max=config.self_play_echo_max,
+        checkpoint_path=config.checkpoint_path,
+        data_path=config.data_path):
     try:
-        game = SelfPlayGame(worker_id, checkpoint_path=checkpoint_path, data_path=data_path)
+        game = SelfPlayGame(
+            worker_id=worker_id,
+            echo_max=echo_max,
+            checkpoint_path=checkpoint_path,
+            data_path=data_path,
+            echo_max=config.self_play_echo_max,
+            )
         game.start()
     except Exception as ex:
         traceback.print_exc()
@@ -483,18 +493,20 @@ def train_woker(checkpoint_path=config.checkpoint_path, data_path=config.data_pa
 
 def learning_loop(
         self_play_wokers_num=config.self_play_wokers_num,
-        echo_max=config.learning_loop_echo_max,
+        total_games_num=2048,
+        learning_echo_max=config.learning_loop_echo_max,
         self_play=True,
         train=True,
         checkpoint_path=config.checkpoint_path,
         data_path=config.data_path
         ):
-    
-    for i in range(echo_max):
+    self_play_echo_max = total_games_num // self_play_wokers_num // config.self_play_batch_size
+
+    for i in range(learning_echo_max):
         if self_play:
             pool = Pool(self_play_wokers_num)
             for i in range(self_play_wokers_num):
-                pool.apply_async(self_play_woker, (i, checkpoint_path, data_path))
+                pool.apply_async(self_play_woker, (i, self_play_echo_max, checkpoint_path, data_path))
             pool.close()
             pool.join()
         if train:
@@ -604,4 +616,4 @@ if __name__ == "__main__":
     elif args.play_with_human:
         play_with_human()
     else:
-        learning_loop(self_play=True)
+        learning_loop(self_play=True, train=False)
