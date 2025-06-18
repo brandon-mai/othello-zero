@@ -145,7 +145,7 @@ class MCTS_Batch:
 
         pi_batch = np.zeros([len(nodes), config.all_moves_num], dtype=np.float32)
         for i, node in enumerate(nodes):
-            n_with_temperature = node.edge_N**(1 / temperature)
+            n_with_temperature = node.edge_N**(1 / temperature) if temperature > 0 else node.edge_N
             sum_n_with_temperature = np.sum(n_with_temperature)
             if sum_n_with_temperature == 0:
                 node.pi = np.zeros([config.all_moves_num], dtype=np.float32)
