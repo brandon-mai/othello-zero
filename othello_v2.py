@@ -42,20 +42,6 @@ class SelfPlayGame:
         self.current_nodes = [None] * batch_size
 
     def start(self):
-        # Configure GPU memory growth for TF2
-        gpus = tf.config.experimental.list_physical_devices('GPU')
-        if gpus:
-            try:
-                for gpu in gpus:
-                    tf.config.experimental.set_memory_growth(gpu, True)
-                # Set memory limit if needed
-                tf.config.experimental.set_memory_limit(
-                    gpus[0], 
-                    int(1024 * config.self_play_woker_gpu_memory_fraction)
-                )
-            except RuntimeError as e:
-                log(f"GPU configuration error: {e}")
-
         nn = net.NN()
         self.version = restore_from_last_checkpoint(
             nn.model, 
