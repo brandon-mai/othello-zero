@@ -401,7 +401,7 @@ def get_temperature(moves_num):
     if moves_num <= 6:
         return 1
     else:
-        return 0.95 ** (moves_num - 6)
+        return max(0.95 ** (moves_num - 6), 0.1)
 
 
 def validate(move):
