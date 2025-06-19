@@ -52,9 +52,9 @@ if os.path.exists(log_path) is not True:
     os.mkdir(log_path)
 
 # Hardware-optimized for 4-core CPU
-# simulations_num = 2
+simulations_num = 100
 # residual_blocks_num = 4
-# self_play_wokers_num = 2
+self_play_wokers_num = 4
 # self_play_batch_size = 32  # 2 workers * 2 echoes * 32 games = 128 games
 # train_batch_size = 32
 # num_train_epoch = 2
