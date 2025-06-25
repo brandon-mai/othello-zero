@@ -159,10 +159,10 @@ if __name__ == "__main__":
     
     # Create simulation
     simulation = OthelloSimulation(
-        agent1_class=mcts_agent,
-        agent1_args={'player_id':config.black},
+        agent1_class=zero_agent,
+        agent1_args={},
         agent2_class=minimax_agent,
-        agent2_args={'player_id':config.white, 'heuristic': HEURISTICS.HYBRID},
+        agent2_args={'player_id':config.white},
         )
     
     # Run simulation

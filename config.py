@@ -40,7 +40,7 @@ learning_loop_echo_max = 1        # Number of times to run self-play + training 
 
 # edax config
 edax_level = 1
-edax_path = "./edax/Edax"
+edax_path = "./edax/wEdax-x86-64-v3.exe"
 edax_eval_path = "./edax/data/eval.dat"
 edax_book_path = "./edax/data/book.dat"
 
@@ -56,9 +56,9 @@ if os.path.exists(log_path) is not True:
     os.mkdir(log_path)
 
 # Hardware-optimized for 4-core CPU
-simulations_num = 100
+# simulations_num = 100
 # residual_blocks_num = 4
-self_play_wokers_num = 4
+# self_play_wokers_num = 4
 # self_play_batch_size = 32  # 2 workers * 2 echoes * 32 games = 128 games
 # train_batch_size = 32
 # num_train_epoch = 2

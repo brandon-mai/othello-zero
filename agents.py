@@ -39,9 +39,9 @@ class Player:
 
 class EdaxAgent(Agent):
     def __init__(self, level):
-        edax_exec = config.edax_path + " -q -eval-file " + config.edax_eval_path \
-            + " -book-file " + config.edax_book_path + " --level " + str(level) + " -book-randomness 10"
+        edax_exec = config.edax_path
         self.edax = Popen(edax_exec, shell=True, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        self.write_stdin("l " + str(level))
         self.read_stdout()
 
     def make_move(self, current_node):
@@ -309,7 +309,14 @@ class MCTSAgent(Agent):
 
 if __name__ == "__main__":
     try:
-        minmax_agent = MinimaxAgent(depth=3, verbose=True)
-        print("MinMax agent initialized successfully")
+        agent = EdaxAgent(config.edax_level)
+        print("Edax agent initialized.")
+        
+        # Example usage
+        for _ in range(5):
+            move = agent.make_move(tree.FakeNode())
+            print(f"Edax move: {move}")
+        
+        agent.close()
     except Exception as e:
-        print(f"Error initializing MinMax agent: {e}")
+        print(f"An error occurred: {e}")
