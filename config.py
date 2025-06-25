@@ -1,4 +1,5 @@
 import os
+from numba import int16, int16, int32
 
 # don't touch
 N = 8                  # 8x8 Othello board
@@ -7,6 +8,9 @@ pass_move = 64         # Pass move index
 all_moves_num = 65     # 64 moves + 1 pass
 black = 1
 white = -1
+INT16_POSINF = int16(32767)
+INT16_NEGINF = int16(-32767)
+MCTS_BATCH_SIZE = int32(1000)
 
 # mcts config
 c_puct = 1             # UCB exploration constant (standard AlphaZero value)
@@ -15,7 +19,7 @@ noise_alpha = 0.5      # Dirichlet noise alpha for exploration
 noise_weight = 0.25    # Weight of exploration noise
 
 # nn config
-history_num = 1          # Number of previous board states to include
+history_num = 4          # Number of previous board states to include
 residual_blocks_num = 9  # Number of ResNet blocks
 filters_num = 64         # Number of filters in convolutional layers
 momentum = 0.9           # SGD momentum
