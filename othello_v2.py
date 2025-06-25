@@ -13,7 +13,6 @@ from tqdm.auto import tqdm
 import numpy as np
 import tensorflow as tf
 
-import player
 import board
 import config
 import gui
@@ -514,94 +513,6 @@ def learning_loop(
             process.join()
 
 
-def play_game(player1, player2):
-    """Play a game between two players.
-    Args:
-        player1: First player (plays as black)
-        player2: Second player (plays as white)
-    Returns:
-        int: 1 if player1 wins, -1 if player2 wins, 0 if draw
-    """
-    # Check if both players inherit from Player class
-    if not isinstance(player1, player.Player):
-        raise TypeError(f"player1 must inherit from Player class, got {type(player1)}")
-    if not isinstance(player2, player.Player):
-        raise TypeError(f"player2 must inherit from Player class, got {type(player2)}")
-    
-    moves_num = 0
-    current_node = tree.Node(tree.FakeNode(), 0, config.black, board.Board())
-    current_node.is_game_root = True
-    current_node.is_search_root = True
-
-    def make_move_with_gui(current_node, move):
-        current_node = make_move(current_node, move)
-        gui.print_node(current_node)
-        return current_node
-
-    while not current_node.is_terminal:
-        gc.collect()
-        moves_num += 1
-
-        if current_node.player == config.black:
-            player_move = player1.make_move(current_node)
-            print(f"Player 1 move: {player_move}")
-        else:
-            player_move = player2.make_move(current_node)
-            print(f"Player 2 move: {player_move}")
-        
-        current_node = make_move_with_gui(current_node, player_move)
-    
-    # Determine winner
-    black_stones_num = np.sum(current_node.board.black_array2d)
-    white_stones_num = np.sum(current_node.board.white_array2d)
-    
-    print_winner(current_node)
-    
-    if black_stones_num > white_stones_num:
-        return 1  # Player 1 (black) wins
-    elif black_stones_num < white_stones_num:
-        return -1  # Player 2 (white) wins
-    else:
-        return 0  # Draw
-
-
-class ZeroPlayer(player.Player):
-    """AI player using the trained neural network and MCTS.
-    Args:
-        nn: The neural network to play.
-    """
-    def __init__(self, nn):
-        super().__init__()
-        self.nn = nn
-        if not isinstance(self.nn, net.NN):
-            raise TypeError(f"nn must be an instance of net.NN, got {type(self.nn)}")
-        self.mcts_batch = tree.MCTS_Batch(self.nn)
-    
-    def make_move(self, current_node):
-        pi = self.mcts_batch.alpha([current_node], 0)[0]
-        return pick_move_greedily(pi)
-
-
-def play_with_edax(edax_level=config.edax_level):
-    """Play Zero vs Edax and return result."""
-    nn = net.NN()
-    restore_from_last_checkpoint(nn.model, checkpoint_path=config.checkpoint_path)
-    zero_player = ZeroPlayer(nn)
-    edax_player = player.EdaxPlayer(edax_level)
-    result = play_game(zero_player, edax_player)
-    edax_player.close()
-    return result
-
-
-def play_with_human():
-    """Play Zero vs Human and return result."""
-    nn = net.NN()
-    restore_from_last_checkpoint(nn.model, checkpoint_path=config.checkpoint_path)
-    zero_player = ZeroPlayer(nn)
-    human_player = player.HumanPlayer()
-    return play_game(zero_player, human_player)
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-l", "--learning-loop", help='start a learning loop from the latest model, or a new random model if there is no any model', action="store_true")
@@ -610,9 +521,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.learning_loop:
         learning_loop()
-    elif args.play_with_edax:
-        play_with_edax()
-    elif args.play_with_human:
-        play_with_human()
     else:
         learning_loop(self_play=True, train=False)
