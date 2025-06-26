@@ -39,9 +39,8 @@ class Player:
 
 class EdaxAgent(Agent):
     def __init__(self, level):
-        edax_exec = config.edax_path
+        edax_exec = config.edax_path + " -eval-file " + config.edax_eval_path + " --level " + str(level)
         self.edax = Popen(edax_exec, shell=True, stdout=PIPE, stdin=PIPE, stderr=STDOUT)
-        self.write_stdin("l " + str(level))
         self.read_stdout()
 
     def make_move(self, current_node):
@@ -56,7 +55,9 @@ class EdaxAgent(Agent):
         if edax_move_plane == "PS":
             return config.pass_move
         else:
-            return plane_2_line(edax_move_plane)
+            move = plane_2_line(edax_move_plane)
+            move = config.pass_move if move is None else move
+            return move
         
     def copy(self):
         return EdaxAgent(config.edax_level)

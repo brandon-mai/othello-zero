@@ -11,6 +11,7 @@ import agents
 import board
 import config
 import tree
+from util import line_2_plane
 
 
 class OthelloSimulation:
@@ -100,13 +101,13 @@ def simulate_single_game(sim_args: tuple):
     game_board = board.Board()
     current_agent = config.black
     consecutive_passes = 0
+
+    fake_parent = tree.FakeNode()
+    temp_node = tree.Node(fake_parent, 0, current_agent, game_board)
+    temp_node.is_game_root = True
+    temp_node.is_search_root = True
     
-    while consecutive_passes < 2:
-        fake_parent = tree.FakeNode()
-        temp_node = tree.Node(fake_parent, 0, current_agent, game_board)
-        temp_node.is_game_root = True
-        temp_node.is_search_root = True
-        
+    while consecutive_passes < 2:       
         if current_agent == config.black:
             agent_move = agent1.make_move(temp_node)
         else:
@@ -119,7 +120,13 @@ def simulate_single_game(sim_args: tuple):
             game_board = game_board.make_move(current_agent, agent_move)
             consecutive_passes = 0
         
+        # black_count = np.sum(game_board.black_array2d)
+        # white_count = np.sum(game_board.white_array2d)
+        # print(f"Black: {black_count}, White: {white_count}, Move: {line_2_plane(agent_move)}, Player: {current_agent}")
+        
+        temp_node = make_move(temp_node, agent_move)
         current_agent = -current_agent
+
     
     black_count = np.sum(game_board.black_array2d)
     white_count = np.sum(game_board.white_array2d)
@@ -156,14 +163,15 @@ if __name__ == "__main__":
     random_agent = agents.RandomAgent
     minimax_agent = agents.MinimaxAgent
     mcts_agent = agents.MCTSAgent
+    edax_agent = agents.EdaxAgent
     
     # Create simulation
     simulation = OthelloSimulation(
-        agent1_class=zero_agent,
-        agent1_args={},
-        agent2_class=minimax_agent,
-        agent2_args={'player_id':config.white},
+        agent1_class=mcts_agent,
+        agent1_args={'player_id': config.black},
+        agent2_class=edax_agent,
+        agent2_args={'level': 4},
         )
     
     # Run simulation
-    results = simulation.run_simulation(num_simulations=100, parallel=True)
+    results = simulation.run_simulation(num_simulations=50, parallel=True)

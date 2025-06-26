@@ -40,9 +40,8 @@ learning_loop_echo_max = 1        # Number of times to run self-play + training 
 
 # edax config
 edax_level = 1
-edax_path = "./edax/wEdax-x86-64-v3.exe"
-edax_eval_path = "./edax/data/eval.dat"
-edax_book_path = "./edax/data/book.dat"
+edax_path = os.path.join(os.path.dirname(__file__), "edax", "wEdax-x86-64-v3.exe")
+edax_eval_path = os.path.join(os.path.dirname(__file__), "edax", "data", "eval.dat")
 
 # path config
 checkpoint_path = "./checkpoint/"
