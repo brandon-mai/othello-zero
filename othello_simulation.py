@@ -160,14 +160,15 @@ if __name__ == "__main__":
     minimax_agent = agents.MinimaxAgent
     mcts_agent = agents.MCTSAgent
     edax_agent = agents.EdaxAgent
+    human_player = agents.HumanPlayer
     
     # Create simulation
     simulation = OthelloSimulation(
-        agent1_class=mcts_agent,
+        agent1_class=minimax_agent,
         agent1_args={'player_id': config.black},
-        agent2_class=edax_agent,
-        agent2_args={'level': 4},
+        agent2_class=human_player,
+        agent2_args={},
         )
     
     # Run simulation
-    results = simulation.run_simulation(num_simulations=50, parallel=True)
+    results = simulation.run_simulation(num_simulations=1, parallel=False)

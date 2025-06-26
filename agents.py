@@ -13,6 +13,7 @@ import minmax
 import tree # tree for AlphaZero
 import search_tree # tree for pure MCTS
 from bitboard_utils import get_player_board
+import gui
 
 
 class Agent:
@@ -83,6 +84,7 @@ class EdaxAgent(Agent):
 class HumanPlayer(Agent):
     def make_move(self, current_node):
         human_input = -1
+        gui.print_node(current_node)
         while True:
             human_input_str = input(">")
             if human_input_str == "pass":
