@@ -15,6 +15,13 @@ class FakeNode:
 
 class Node:
     def __init__(self, parent, move, player, board:board.Board=None):
+        """Initialize a Node.
+        Args:
+            parent (Node): The parent node.
+            move (int): The move made to reach this node.
+            player (int): The player to move next, usually opposite of the one making the move.
+            board (Board, optional): The board state after the move. If None, it will be created from the parent.
+        """
         self.parent = parent
         self.expanded = False
         self.move = move

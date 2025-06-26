@@ -120,10 +120,6 @@ def simulate_single_game(sim_args: tuple):
             game_board = game_board.make_move(current_agent, agent_move)
             consecutive_passes = 0
         
-        # black_count = np.sum(game_board.black_array2d)
-        # white_count = np.sum(game_board.white_array2d)
-        # print(f"Black: {black_count}, White: {white_count}, Move: {line_2_plane(agent_move)}, Player: {current_agent}")
-        
         temp_node = make_move(temp_node, agent_move)
         current_agent = -current_agent
 
